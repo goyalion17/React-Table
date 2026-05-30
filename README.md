@@ -1,68 +1,106 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React Table
 
-## Available Scripts
+A small sortable user table with a detail panel. The data is fetched from
+[JSONPlaceholder](https://jsonplaceholder.typicode.com/users); clicking a column
+header sorts the table, clicking a row shows that user's details below.
 
-In the project directory, you can run:
+This repository started life as a Create React App (`react-scripts@3.3.0`,
+React 16.12) and has been modernised end-to-end.
 
-### `npm start`
+## Stack
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+| Area     | Tool                                               |
+| -------- | -------------------------------------------------- |
+| Build    | [Vite 6](https://vite.dev/)                        |
+| UI       | [React 19](https://react.dev/) (function + hooks)  |
+| Styling  | [Bootstrap 5.3](https://getbootstrap.com/)         |
+| Utility  | [`lodash-es`](https://lodash.com/) (tree-shakable) |
+| Lint     | [ESLint 9](https://eslint.org/) (flat config)      |
+| Format   | [Prettier 3](https://prettier.io/)                 |
+| Tests    | [Vitest 3](https://vitest.dev/) + Testing Library  |
+| Test env | [jsdom](https://github.com/jsdom/jsdom)            |
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Security
 
-### `npm test`
+`npm audit` reports **0 vulnerabilities** (down from 233 in the original
+CRA-based dependency tree).
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Requirements
 
-### `npm run build`
+- Node.js >= 20
+- npm >= 10
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Quick start
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+```bash
+npm install
+npm run dev        # http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Scripts
 
-### `npm run eject`
+| Script                 | Purpose                              |
+| ---------------------- | ------------------------------------ |
+| `npm run dev`          | Start the Vite dev server            |
+| `npm run build`        | Produce a production build in `dist` |
+| `npm run preview`      | Preview the production build         |
+| `npm run lint`         | ESLint over the whole project        |
+| `npm run lint:fix`     | ESLint with `--fix`                  |
+| `npm run format`       | Prettier write                       |
+| `npm run format:check` | Prettier check (used by CI)          |
+| `npm run test`         | Vitest in watch mode                 |
+| `npm run test:run`     | Vitest single run (used by CI)       |
+| `npm run coverage`     | Vitest with coverage                 |
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Project layout
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+.
+├── index.html               Vite entry HTML
+├── vite.config.js
+├── eslint.config.js
+├── .prettierrc.json
+├── public/                  Static assets served as-is
+└── src/
+    ├── main.jsx             createRoot bootstrap
+    ├── App.jsx              Data fetching + state
+    ├── Table/
+    │   ├── Table.jsx
+    │   └── Table.test.jsx
+    ├── DetailRowView/
+    │   ├── DetailRowView.jsx
+    │   └── DetailRowView.test.jsx
+    ├── Loader/
+    │   ├── Loader.jsx
+    │   ├── Loader.css
+    │   └── Loader.test.jsx
+    └── test/
+        └── setup.js         Testing Library + jest-dom registration
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Testing
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Tests live next to the component they cover. The shared setup file
+(`src/test/setup.js`) registers `@testing-library/jest-dom` matchers and
+calls `cleanup()` between tests. Run them with:
 
-## Learn More
+```bash
+npm run test:run
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## What changed compared to the original
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Replaced Create React App (`react-scripts@3.3.0`) with **Vite 6**.
+- Upgraded **React 16 -> 19**, `ReactDOM.render` -> `createRoot` with `<StrictMode>`.
+- Converted all components from classes to **function components with hooks**.
+- Replaced the dead `http://www.filltext.com` API with the public, HTTPS
+  **JSONPlaceholder** users endpoint and adapted the column / detail schema.
+- Upgraded **Bootstrap 4 -> 5.3**; refreshed the layout with cards and a
+  description list.
+- Replaced `lodash` with the tree-shakable `lodash-es`.
+- Removed the legacy CRA `serviceWorker.js`.
+- Translated the user-facing strings to English and added accessible
+  attributes (`role="status"` / `aria-label` on the loader).
+- Added **ESLint 9 (flat config)**, **Prettier 3**, **Vitest 3** with
+  Testing Library, and a small test suite covering the table interactions,
+  the detail panel, and the loader.
